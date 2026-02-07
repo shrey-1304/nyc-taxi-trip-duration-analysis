@@ -1,3 +1,9 @@
-## this is the link to the dataset used in the notebook 
+NYC Taxi Trip Duration Dataset
 
-https://www.kaggle.com/datasets/yasserh/nyc-taxi-trip-duration
+Source: Kaggle
+Link: https://www.kaggle.com/datasets/yasserh/nyc-taxi-trip-duration
+
+Instructions:
+1. Download the dataset from the link above
+2. Place the CSV file in your notebook path 
+3. Run the notebook from start to finish
