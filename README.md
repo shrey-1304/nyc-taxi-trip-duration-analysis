@@ -42,8 +42,8 @@ The dataset contains no missing values and exhibits strong right-skew in raw tri
 ### 3. Modeling
 An Ordinary Least Squares (OLS) regression was implemented from scratch using the normal equation:
 
-/ 
-  log(T) = β0 + β1·log(1 + D) + β2·R + β3·(log(1 + D) × R)
+# formulation
+    log(T) = β0 + β1·log(1 + D) + β2·R + β3·(log(1 + D) × R)
 
 
 This model estimates the conditional mean log trip duration.
