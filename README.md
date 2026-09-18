@@ -2,7 +2,7 @@
 
 ## Executive Summary
 
-This project analyzes NYC taxi trip duration data to understand the factors influencing how long taxi rides take. The analysis involves exploratory data analysis (EDA), feature engineering, and statistical correlations to identify key predictors of trip duration.
+This project analyzes NYC taxi trip duration data to understand the factors influencing how long taxi rides take. The analysis involves exploratory data analysis (EDA), feature engineering, and statistical testing to identify the strongest drivers of trip time and to evaluate how time-of-day congestion affects travel duration.
 
 ---
 
@@ -121,7 +121,7 @@ Correlation matrix between key features and log-transformed trip duration:
 
 - **Central Tendencies are Similar:** Rush hour trips have only slightly higher mean (0.027 higher) and median durations on the log scale
 - **Higher Variability in Rush Hours:** Standard deviation is slightly higher during rush hours (0.807 vs 0.791), suggesting more extreme values
-- **Heavier Right Tail During Rush Hours:** While log-transformed distributions appear similar, the raw scale analysis reveals a heavier right tail during rush hours, indicating increased likelihood of longer trip durations during peak traffic
+- **Heavier Right Tail During Rush Hours:** While log-transformed distributions appear similar, the raw scale analysis reveals a heavier right tail during rush hours, indicating increased likelihood of travel delays in peak periods
 
 ---
 
@@ -129,7 +129,7 @@ Correlation matrix between key features and log-transformed trip duration:
 
 1. **Distance Dominates Duration:** Trip distance is by far the strongest predictor of trip duration (r = 0.794), indicating that spatial separation is the primary driver of time.
 
-2. **Limited Rush Hour Effect:** Traditional rush hours (7–10 AM, 4–7 PM) show minimal impact on average trip duration when distance is controlled for, though there is increased variability in outcomes.
+2. **Limited Rush Hour Effect:** Traditional rush hours (7–10 AM, 4–7 PM) show minimal impact on average trip duration when distance is controlled for, though there is increased variability in the tails.
 
 3. **Temporal Patterns Are Subtle:** Hour and weekday show negligible direct correlations with trip duration, suggesting that congestion effects are secondary to the fundamental distance constraint.
 
@@ -137,9 +137,62 @@ Correlation matrix between key features and log-transformed trip duration:
 
 ---
 
-## 6. Improvements & Recommendations
+## 6. Scikit-Learn Modeling Section
 
-### 6.1 Data Enhancement
+The notebook copy `notebooks/Copy_of_NYC_DA.ipynb` includes an expanded scikit-learn workflow for supervised regression modeling. This section builds on the exploratory analysis by turning the cleaned feature set into a machine-learning pipeline for predicting trip duration.
+
+### 6.1 Modeling Objective
+
+The goal is to predict the trip duration using features such as:
+
+- `distance_km`
+- `hour`
+- `weekday`
+- `passenger_count`
+- `vendor_id`
+- `is_rush`
+
+The target is the log-transformed trip duration (`log_duration`), which helps reduce skewness and improves regression stability.
+
+### 6.2 Typical Workflow Included in the Notebook
+
+The scikit-learn section follows a standard production-style approach:
+
+- Data cleaning and feature preparation
+- Train/test splitting for model validation
+- Feature selection and/or preprocessing
+- Pipeline construction for numeric and categorical variables
+- Model training with regression algorithms
+- Evaluation using metrics such as MAE, RMSE, and R²
+- Comparison of multiple models to determine the best performer
+
+### 6.3 Common Models Used
+
+The notebook demonstrates or supports comparison between common regression models, including:
+
+- Linear Regression
+- Ridge / Lasso regression
+- Random Forest Regressor
+- Gradient Boosting / XGBoost-style tree ensembles (depending on the notebook version)
+
+These methods are useful because trip-duration prediction is a continuous regression problem, and tree-based models often capture non-linear relationships more effectively than a simple linear model.
+
+### 6.4 Why scikit-learn Matters Here
+
+Using scikit-learn allows the project to move beyond descriptive analysis into predictive modeling. It provides a reproducible framework for:
+
+- benchmarking model performance,
+- comparing baseline and advanced regressors,
+- validating assumptions with train/test splits,
+- measuring generalization error using consistent metrics.
+
+This makes the notebook copy especially valuable for demonstrating the complete machine-learning workflow from EDA to prediction.
+
+---
+
+## 7. Improvements & Recommendations
+
+### 7.1 Data Enhancement
 
 1. **External Traffic Data Integration**
    - Incorporate real-time traffic speed data from Google Maps API or similar sources
@@ -159,7 +212,7 @@ Correlation matrix between key features and log-transformed trip duration:
    - Consider seasonal patterns (holidays, summer vs. winter)
    - **Impact:** Might reveal non-linear time-of-day effects
 
-### 6.2 Feature Engineering Improvements
+### 7.2 Feature Engineering Improvements
 
 1. **Distance-Based Segmentation**
    - Create categorical distance bins (short: <1 km, medium: 1-5 km, long: >5 km)
@@ -176,7 +229,7 @@ Correlation matrix between key features and log-transformed trip duration:
    - Identify unusually slow/fast trips by distance category
    - **Insight:** Flag anomalies and understand trip efficiency variations
 
-### 6.3 Advanced Modeling Approaches
+### 7.3 Advanced Modeling Approaches
 
 1. **Multi-Model Strategy**
    - Build separate models for short vs. long trips
@@ -194,7 +247,7 @@ Correlation matrix between key features and log-transformed trip duration:
    - Identify unusual traffic patterns and events
    - **Benefit:** Better understanding of exceptional trips
 
-### 6.4 Data Quality & Outlier Handling
+### 7.4 Data Quality & Outlier Handling
 
 1. **Outlier Investigation**
    - Current analysis shows some trips with minimal coordinates (all NaN)
@@ -207,7 +260,7 @@ Correlation matrix between key features and log-transformed trip duration:
    - Develop imputation strategies for vendor or dropoff info if needed
    - **Preventive:** Maintain data quality logs
 
-### 6.5 Business Intelligence Enhancements
+### 7.5 Business Intelligence Enhancements
 
 1. **Predictive Deployment**
    - Build production-ready model to estimate trip duration for users booking rides
@@ -226,17 +279,18 @@ Correlation matrix between key features and log-transformed trip duration:
 
 ---
 
-## 7. Methodology Notes
+## 8. Methodology Notes
 
 - **Correlation Method:** Spearman rank correlation (non-parametric) used to capture monotonic relationships without assuming linearity
 - **Transformation Rationale:** Log transformation applied to stabilize variance and enable parametric statistical inference
 - **Geographic Calculation:** Haversine formula preferred over Euclidean distance for its geographic accuracy
+- **Modeling Approach:** scikit-learn regression pipeline used to benchmark supervised learning methods for trip-duration prediction
 
 ---
 
-## 8. Conclusion
+## 9. Conclusion
 
-The analysis reveals that **trip distance is the dominant predictor of taxi trip duration**, with a correlation of 0.794. Traditional congestion proxies like rush-hour time windows show minimal direct correlation when distance is considered, though they exhibit increased variability. To improve predictive accuracy, future work should focus on incorporating external traffic data, weather information, and enhanced spatial features. The current dataset provides a solid foundation but would significantly benefit from integration with real-time traffic and NYC infrastructure data.
+The analysis reveals that **trip distance is the dominant predictor of taxi trip duration**, with a correlation of 0.794. Traditional congestion proxies like rush-hour time windows show minimal direct impact on average trip duration when distance is considered, although variability and extreme values increase during peak periods. The project’s scikit-learn notebook extends the analysis from descriptive insight to predictive modeling, creating a foundation for more accurate trip-time forecasting.
 
 ---
 
@@ -246,9 +300,10 @@ The analysis reveals that **trip distance is the dominant predictor of taxi trip
 .
 ├── README.md                          # This file
 ├── notebooks/
-│   └── NYC_DA.ipynb                   # Main analysis notebook
+│   ├── NYC_DA.ipynb                   # Main analysis notebook
+│   └── Copy_of_NYC_DA.ipynb           # Copy with expanded scikit-learn workflow
 └── data/
-    └── NYC.csv                         # Dataset (not included)
+    └── NYC.csv                       # Dataset (not included)
 ```
 
 ## Requirements
@@ -258,10 +313,11 @@ The analysis reveals that **trip distance is the dominant predictor of taxi trip
 - numpy
 - matplotlib
 - scipy (for Spearman correlation)
+- scikit-learn (for regression modeling and ML workflow)
 
 ## Usage
 
-Open `notebooks/NYC_DA.ipynb` in Jupyter Notebook to explore the analysis step-by-step.
+Open `notebooks/NYC_DA.ipynb` in Jupyter Notebook to explore the analysis step-by-step, or use `notebooks/Copy_of_NYC_DA.ipynb` for the scikit-learn model-building workflow.
 
 ---
 
